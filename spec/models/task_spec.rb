@@ -1,9 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe Task, type: :model do
-  let!(:task) { FactoryBot.create(:task) }
-  let(:empty_task) { FactoryBot.build(:empty_task) }
-  let(:same_task) { FactoryBot.build(:same_task) }
+  let(:empty_task) { build(:empty_task) }
+  let(:dupulicate_task) { build(:dupulicate_task) }
 
   # 空の場合無効
   context 'empty params' do
@@ -17,9 +16,10 @@ RSpec.describe Task, type: :model do
   end
 
   # 重複する場合無効
-  context 'same params' do
+  context 'dupulicate params' do
+    let!(:task) { create(:task) }
     it 'invalid with a duplicate title' do
-      expect(same_task.valid?).to eq(false)
+      expect(dupulicate_task.valid?).to eq(false)
     end
   end
 end

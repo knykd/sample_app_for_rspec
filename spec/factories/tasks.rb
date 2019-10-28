@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :task do
     title { 'test' }
-    status { 'todo' }
+    status { :todo }
   end
 
   factory :empty_task, class: Task do
@@ -9,8 +9,8 @@ FactoryBot.define do
     status { '' }
   end
 
-  factory :same_task, class: Task do
+  factory :dupulicate_task, class: Task do
     title { 'test' }
-    status { 'done' }
+    status { :done }
   end
 end
