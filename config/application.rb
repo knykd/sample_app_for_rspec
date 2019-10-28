@@ -29,5 +29,15 @@ module RspecSample
 
     # Don't generate system test files.
     config.generators.system_tests = nil
+
+    config.generators do |g|
+      g.test_framework :rspec, 
+        model_spec: true,
+        view_specs: false, 
+        helper_specs: false, 
+        controller_specs: false, 
+        routing_specs: false,
+        request_specs: true
+    end
   end
 end
