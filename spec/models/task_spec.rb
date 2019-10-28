@@ -7,11 +7,13 @@ RSpec.describe Task, type: :model do
   # 空の場合無効
   context 'empty params' do
     it 'invalid without a title' do
-      expect(empty_task.valid?).to eq(false)
+      empty_task.valid?
+      expect(empty_task.errors[:title]).to include("can't be blank")
     end
 
     it 'invalid without a status' do
-      expect(empty_task.valid?).to eq(false)
+      empty_task.valid?
+      expect(empty_task.errors[:title]).to include("can't be blank")
     end
   end
 
