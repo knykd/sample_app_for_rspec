@@ -13,7 +13,7 @@ RSpec.describe Task, type: :model do
 
     it 'invalid without a status' do
       empty_task.valid?
-      expect(empty_task.errors[:title]).to include("can't be blank")
+      expect(empty_task.errors[:status]).to include("can't be blank")
     end
   end
 
@@ -21,7 +21,8 @@ RSpec.describe Task, type: :model do
   context 'dupulicate params' do
     let!(:task) { create(:task) }
     it 'invalid with a duplicate title' do
-      expect(dupulicate_task.valid?).to eq(false)
+      dupulicate_task.valid?
+      expect(dupulicate_task.errors[:title]).to include('has already been taken')
     end
   end
 end
