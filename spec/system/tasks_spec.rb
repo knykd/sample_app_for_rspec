@@ -1,18 +1,22 @@
 require 'rails_helper'
 
 RSpec.describe Task, type: :system do
-  include LoginSupport
-
+  let(:user) { create(:user) }
+  let(:other_user) { create(:other_user) }
+  let(:task_by_other_user) { create(:task_by_other_user, user_id: user.id) }
+  let(:task_by_logined_user) { create(:task_by_logined_user, user_id: user.id) }
+  let(:task) { create(:task) }
+  let(:dupulicate_task) { build(:dupulicate_task) }
   describe '他のユーザでログイン' do
-    let!(:user) { create(:user) }
-    let!(:other_user) { create(:other_user) }
-    let(:task_by_other_user) { create(:task_by_other_user, user_id: user.id) }
     before do
+      user
+      other_user
+      task_by_other_user
       login_as(other_user)
     end
 
     context 'タスク一覧ページにアクセス' do
-      it '編集・削除が表示されない' do
+      it '編集・削除のリンクが表示されない' do
         task_by_other_user
         visit tasks_path
 
@@ -24,10 +28,10 @@ RSpec.describe Task, type: :system do
   end
 
   describe 'ログイン後' do
-    let!(:user) { create(:user) }
-    let(:task_by_logined_user) { create(:task_by_logined_user, user_id: user.id) }
-    let(:dupulicate_task) { build(:dupulicate_task) }
     before do
+      user
+      task_by_logined_user
+      dupulicate_task
       login_as(user)
     end
 
@@ -39,7 +43,7 @@ RSpec.describe Task, type: :system do
           expect(current_path).to eq tasks_path
 
           click_link "Edit"
-          expect(current_path).to eq edit_task_path(user.tasks.ids)
+          expect(current_path).to eq edit_task_path(task_by_logined_user.id)
 
           fill_in "Title", with: "user title"
           fill_in "Content", with: "user content"
@@ -47,7 +51,7 @@ RSpec.describe Task, type: :system do
           fill_in "task_deadline", with: "1999-12-31T23:59:60Z"
           click_button "Update Task"
           expect(page).to have_content "Task was successfully updated."
-          expect(current_path).to eq task_path(user.tasks.ids)
+          expect(current_path).to eq task_path(task_by_logined_user.id)
         end
       end
 
@@ -58,7 +62,7 @@ RSpec.describe Task, type: :system do
           expect(current_path).to eq tasks_path
 
           click_link "Edit"
-          expect(current_path).to eq edit_task_path(user.tasks.ids)
+          expect(current_path).to eq edit_task_path(task_by_logined_user.id)
 
           fill_in "Title", with: ""
           fill_in "Content", with: "user content"
@@ -66,19 +70,19 @@ RSpec.describe Task, type: :system do
           fill_in "task_deadline", with: "1999-12-31T23:59:60Z"
           click_button "Update Task"
           expect(page).to have_content "Title can't be blank"
-          expect(current_path).to eq task_path(user.tasks.ids)
+          expect(current_path).to eq task_path(task_by_logined_user.id)
         end
       end
 
       context '登録済のタイトルを使用' do
-        let!(:task) { create(:task) }
         it 'タスクの編集が失敗' do
+          task
           task_by_logined_user
           visit tasks_path
           expect(current_path).to eq tasks_path
 
           click_link "Edit"
-          expect(current_path).to eq edit_task_path(user.tasks.ids)
+          expect(current_path).to eq edit_task_path(task_by_logined_user.id)
 
           fill_in "Title", with: "test"
           fill_in "Content", with: "user content"
@@ -87,7 +91,7 @@ RSpec.describe Task, type: :system do
           click_button "Update Task"
           dupulicate_task.valid?
           expect(dupulicate_task.errors[:title]).to include('has already been taken')
-          expect(current_path).to eq task_path(user.tasks.ids)
+          expect(current_path).to eq task_path(task_by_logined_user.id)
         end
       end
     end

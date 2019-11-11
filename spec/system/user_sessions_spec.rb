@@ -1,11 +1,11 @@
 require 'rails_helper'
 
 RSpec.describe 'UserSessions', type: :system do
-  include LoginSupport
+  let(:user) { create(:user) }
   describe 'ログイン前' do
     context 'フォームの入力値が正常' do
-      let!(:user) { create(:user) }
       it 'ログインが成功する' do
+        user
         login_as(user)
       end
     end
@@ -21,8 +21,8 @@ RSpec.describe 'UserSessions', type: :system do
 
   describe 'ログイン後' do
     context 'ログアウトボタンをクリック' do
-      let!(:user) { create(:user) }
       it 'ログアウト処理が成功する' do
+        user
         login_as(user)
 
         click_link "Logout"

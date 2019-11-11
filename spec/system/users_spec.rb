@@ -1,8 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe User, type: :system do
-  include LoginSupport
+  let(:user) { create(:user) }
+  let(:task) { create(:task) }
   let(:dupulicate_user) { build(:dupulicate_user) }
+  let(:other_user) { create(:other_user) }
 
   describe 'ログイン前' do
     describe 'ユーザー新規登録' do
@@ -33,8 +35,8 @@ RSpec.describe User, type: :system do
       end
 
       context '登録済メールアドレスを使用' do
-        let!(:user) { create(:user) }
         it 'ユーザーの新規作成が失敗する' do
+          user
           visit sign_up_path
           fill_in "Email", with: dupulicate_user.email
           fill_in "Password", with: "password"
@@ -49,8 +51,8 @@ RSpec.describe User, type: :system do
 
     describe 'マイページ' do
       context 'ログインしていない状態' do
-        let!(:user) { create(:user) }
         it 'マイページへのアクセスが失敗する' do
+          user
           visit user_path(user)
           expect(page).to have_content "Login required"
           expect(current_path).to eq login_path
@@ -60,8 +62,8 @@ RSpec.describe User, type: :system do
   end
 
   describe 'ログイン後' do
-    let!(:user) { create(:user) }
     before do
+      user
       login_as(user)
     end
 
@@ -115,8 +117,8 @@ RSpec.describe User, type: :system do
     end
 
     context '他ユーザーの編集ページにアクセス' do
-      let!(:other_user) { create(:other_user) }
       it 'アクセスが失敗する' do
+        other_user
         visit edit_user_path(other_user)
         expect(current_path).to eq user_path(user)
         expect(page).to have_content "Forbidden access."
@@ -124,9 +126,9 @@ RSpec.describe User, type: :system do
     end
 
     describe 'マイページ' do
-      let!(:task) { create(:task) }
       context 'タスクを作成' do
         it '新規作成したタスクが表示される' do
+          task          
           click_link "New task"
           expect(current_path).to eq new_task_path
 
