@@ -5,7 +5,6 @@ RSpec.describe 'UserSessions', type: :system do
   describe 'ログイン前' do
     context 'フォームの入力値が正常' do
       it 'ログインが成功する' do
-        user
         login_as(user)
         expect(page).to have_content 'Login successful'
         expect(current_path).to eq root_path
