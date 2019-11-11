@@ -7,6 +7,8 @@ RSpec.describe 'UserSessions', type: :system do
       it 'ログインが成功する' do
         user
         login_as(user)
+        expect(page).to have_content 'Login successful'
+        expect(current_path).to eq root_path
       end
     end
 
